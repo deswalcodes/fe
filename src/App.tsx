@@ -96,7 +96,8 @@ function App() {
   return (
     <div className='chat-container'>
       <header className='chat-header'>
-        <h1>AI Chat</h1>
+        <h1>AI Chat</h1><br/>
+        Chat with YouTube videos, get instant answers in your vibe.
         <button className='reset-button' onClick={resetChat}>
           <svg
             width='16'
