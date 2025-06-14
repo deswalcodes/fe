@@ -57,7 +57,7 @@ function App() {
         body: JSON.stringify({
           query: userMessage.text,
           thread_id: threadId,
-          video_id : "CPu3e9__7W8"
+          video_id: "CPu3e9__7W8"
         }),
       });
 
@@ -94,6 +94,51 @@ function App() {
     setThreadId(Date.now());
   };
 
+ 
+  const renderMessage = (text: string) => {
+    const lines = text.split('\n');
+    const renderedLines = [];
+    let listItems: string[] = [];
+
+    lines.forEach((line, index) => {
+      if (line.startsWith('- ')) {
+        listItems.push(line.replace('- ', ''));
+      } else {
+        if (listItems.length > 0) {
+          renderedLines.push(
+            <ul key={`list-${index}`}>
+              {listItems.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          );
+          listItems = [];
+        }
+
+        if (line.startsWith('## ')) {
+          renderedLines.push(<h2 key={index}>{line.replace('## ', '')}</h2>);
+        } else if (line.startsWith('**') && line.endsWith('**')) {
+          renderedLines.push(<strong key={index}>{line.replace(/\*\*/g, '')}</strong>);
+        } else {
+          renderedLines.push(<p key={index}>{line}</p>);
+        }
+      }
+    });
+
+    // Render any remaining list items
+    if (listItems.length > 0) {
+      renderedLines.push(
+        <ul key={`list-end`}>
+          {listItems.map((item, i) => (
+            <li key={i}>{item}</li>
+          ))}
+        </ul>
+      );
+    }
+
+    return renderedLines;
+  };
+
   return (
     <div className='chat-container'>
       <header className='chat-header'>
@@ -124,14 +169,14 @@ function App() {
           messages.map((message) => (
             <div
               key={message.id}
-              className={`message ${
-                message.isUser ? 'user-message' : 'ai-message'
-              }`}
+              className={`message ${message.isUser ? 'user-message' : 'ai-message'}`}
             >
               <div className='message-avatar'>
                 {message.isUser ? 'You' : 'AI'}
               </div>
-              <div className='message-content'>{message.text}</div>
+              <div className='message-content'>
+                {renderMessage(message.text)}
+              </div>
             </div>
           ))
         )}
